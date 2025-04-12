@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin News - Notícias e Cotação ao Vivo</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fab fa-bitcoin"></i>
+                <h1>Bitcoin News</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#noticias">Notícias</a></li>
+                    <li><a href="#analise">Análise</a></li>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li class="theme-toggle">
+                        <button id="theme-toggle-btn">
+                            <i class="fas fa-moon"></i>
+                            <span>Dark Mode</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="price-ticker">
+        <div class="container">
+            <div class="price-card">
+                <div class="price-header">
+                    <i class="fab fa-bitcoin"></i>
+                    <h2>Bitcoin (BTC)</h2>
+                </div>
+                <div class="price-content">
+                    <div class="current-price">
+                        <span id="btc-price">$0.00</span>
+                    </div>
+                    <div class="price-change">
+                        <span id="price-change-percent">0.00%</span>
+                        <span id="price-change-value">$0.00</span>
+                    </div>
+                </div>
+                <div class="price-footer">
+                    <div class="price-stat">
+                        <span>24h Alta</span>
+                        <span id="day-high">$0.00</span>
+                    </div>
+                    <div class="price-stat">
+                        <span>24h Baixa</span>
+                        <span id="day-low">$0.00</span>
+                    </div>
+                    <div class="price-stat">
+                        <span>Volume 24h</span>
+                        <span id="day-volume">$0.00</span>
+                    </div>
+                </div>
+                <div class="last-updated">
+                    Atualizado em <span id="last-updated">00/00/0000 00:00:00</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="chart-section">
+        <div class="container">
+            <h2>Gráfico de Preço</h2>
+            <div class="chart-container">
+                <canvas id="price-chart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section id="news-section">
+        <div class="container">
+            <h2>Notícias do Dia</h2>
+            <div class="news-container">
+                <article class="news-card featured">
+                    <div class="news-image">
+                        <img src="img/bitcoin-news.jpg" alt="Bitcoin e Guerra Comercial">
+                    </div>
+                    <div class="news-content">
+                        <h3>Bitcoin oscila em torno de US$ 80 mil com guerra comercial EUA-China</h3>
+                        <p class="news-meta">Publicado hoje</p>
+                        <p class="news-excerpt">
+                            O Bitcoin está sendo afetado pela escalada da guerra comercial entre Estados Unidos e China, 
+                            com tarifas recíprocas gerando volatilidade nos mercados de risco.
+                        </p>
+                        <a href="#" class="read-more">Ler mais</a>
+                    </div>
+                </article>
+
+                <div class="news-grid">
+                    <article class="news-card">
+                        <div class="news-image">
+                            <img src="img/bitcoin-resistance.jpg" alt="Bitcoin Resistência">
+                        </div>
+                        <div class="news-content">
+                            <h3>Bitcoin pode atingir US$ 84 mil se as condições de alta não melhorarem</h3>
+                            <p class="news-meta">Publicado hoje</p>
+                            <p class="news-excerpt">
+                                Segundo a CryptoQuant, o Bitcoin pode enfrentar resistência em torno de US$ 84.000, 
+                                mas se romper, o próximo grande obstáculo estará em US$ 96.000.
+                            </p>
+                            <a href="#" class="read-more">Ler mais</a>
+                        </div>
+                    </article>
+
+                    <article class="news-card">
+                        <div class="news-image">
+                            <img src="img/bitcoin-tariffs.jpg" alt="Bitcoin e Tarifas">
+                        </div>
+                        <div class="news-content">
+                            <h3>Políticas tarifárias de Trump impactam mercado de criptomoedas</h3>
+                            <p class="news-meta">Publicado hoje</p>
+                            <p class="news-excerpt">
+                                O Bitcoin ultrapassou brevemente os US$ 85 mil em 1º de abril, mas recuou para cerca de US$ 76 mil 
+                                em 8 de abril devido à incerteza em torno das políticas tarifárias.
+                            </p>
+                            <a href="#" class="read-more">Ler mais</a>
+                        </div>
+                    </article>
+
+                    <article class="news-card">
+                        <div class="news-image">
+                            <img src="img/bitcoin-forecast.jpg" alt="Bitcoin Previsão">
+                        </div>
+                        <div class="news-content">
+                            <h3>Analistas preveem Bitcoin a US$ 140 mil até o final de junho</h3>
+                            <p class="news-meta">Publicado hoje</p>
+                            <p class="news-excerpt">
+                                Bill Barhydt, CEO da Abra Global, afirma que o BTC pode chegar a US$ 130 mil ou até US$ 140 mil 
+                                até o final de junho, baseado no aumento da oferta monetária global.
+                            </p>
+                            <a href="#" class="read-more">Ler mais</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="analysis-section">
+        <div class="container">
+            <h2>Por que o Bitcoin está oscilando?</h2>
+            <div class="analysis-content">
+                <div class="analysis-text">
+                    <h3>Principais fatores que influenciam as oscilações de preço</h3>
+                    <div class="factor">
+                        <h4><i class="fas fa-globe"></i> Guerra Comercial EUA-China</h4>
+                        <p>
+                            A China aumentou as tarifas de retaliação sobre produtos norte-americanos de 84% para 125%, 
+                            enquanto os EUA impuseram uma taxa de 145% sobre produtos chineses. Esse vai e vem de tarifas 
+                            comerciais tem gerado instabilidade nos mercados de risco, incluindo criptomoedas.
+                        </p>
+                    </div>
+                    <div class="factor">
+                        <h4><i class="fas fa-chart-line"></i> Níveis de Resistência Técnica</h4>
+                        <p>
+                            Segundo análise da CryptoQuant, o Bitcoin pode enfrentar resistência em torno de US$ 84.000. 
+                            Se romper essa resistência, o próximo grande obstáculo estará em US$ 96.000.
+                        </p>
+                    </div>
+                    <div class="factor">
+                        <h4><i class="fas fa-sync-alt"></i> Correlação com Mercados Tradicionais</h4>
+                        <p>
+                            O Bitcoin tem mostrado correlação com os mercados de ações, especialmente com empresas de tecnologia. 
+                            Segundo o analista Eric Balchunas da Bloomberg, o S&P 500 atingiu uma volatilidade igual à do Bitcoin na última semana.
+                        </p>
+                    </div>
+                    <a href="#" class="read-full-analysis">Ler análise completa</a>
+                </div>
+                <div class="analysis-image">
+                    <img src="img/bitcoin-analysis.jpg" alt="Análise do Bitcoin">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fab fa-bitcoin"></i>
+                    <h2>Bitcoin News</h2>
+                    <p>Seu portal de notícias sobre Bitcoin e criptomoedas</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#noticias">Notícias</a></li>
+                        <li><a href="#analise">Análise</a></li>
+                        <li><a href="#sobre">Sobre</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h3>Redes Sociais</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Bitcoin News. Todos os direitos reservados.</p>
+                <p class="signature">TH</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/theme-toggle.js"></script>
+</body>
+</html>
