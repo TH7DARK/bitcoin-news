@@ -5,7 +5,7 @@
 const CONFIG = {
     // Update intervals (in milliseconds)
     bitcoinUpdateInterval: 60000, // 1 minute
-    newsUpdateInterval: 3600000,  // 1 hour
+    newsUpdateInterval: 1800000,  // 30 minutes (reduzido de 1 hora para 30 minutos)
     
     // API endpoints
     coinGeckoAPI: 'https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false',
@@ -79,7 +79,7 @@ async function updateBitcoinPrice() {
         
         // Update last update time
         const now = new Date();
-        document.querySelector(CONFIG.lastUpdateSelector).textContent = `Atualizado em ${now.toLocaleTimeString()}`;
+        document.querySelector(CONFIG.lastUpdateSelector).textContent = `${now.toLocaleTimeString()}`;
         
         console.log('Bitcoin price data updated successfully');
     } catch (error) {
@@ -164,7 +164,8 @@ async function getFallbackNews() {
                     url: 'https://twitter.com/search?q=bitcoin',
                     source: 'Twitter',
                     date: new Date().toLocaleDateString(),
-                    image: index === 0 ? '/img/bitcoin-news.jpg' : null
+                    image: index === 0 ? '/img/bitcoin-news.jpg' : null,
+                    excerpt: tweet.textContent.trim()
                 }));
             }
         }
@@ -179,36 +180,41 @@ async function getFallbackNews() {
             url: '#',
             source: 'Crypto News',
             date: new Date().toLocaleDateString(),
-            image: '/img/bitcoin-news.jpg',
-            featured: true
+            image: 'img/bitcoin-news.jpg',
+            featured: true,
+            excerpt: 'O Bitcoin continua a se manter acima da marca de $80.000 enquanto investidores aguardam decisões importantes de política monetária dos principais bancos centrais.'
         },
         {
             title: 'Analistas preveem que Bitcoin pode atingir $100.000 até o final do ano',
             url: '#',
             source: 'Bitcoin Analysis',
             date: new Date().toLocaleDateString(),
-            image: '/img/bitcoin-forecast.jpg'
+            image: 'img/bitcoin-forecast.jpg',
+            excerpt: 'Vários analistas de mercado estão prevendo que o Bitcoin pode atingir a marca de $100.000 até o final do ano, impulsionado pela adoção institucional.'
         },
         {
             title: 'Guerra comercial entre EUA e China continua impactando mercados de criptomoedas',
             url: '#',
             source: 'Crypto Economy',
             date: new Date().toLocaleDateString(),
-            image: '/img/bitcoin-tariffs.jpg'
+            image: 'img/bitcoin-tariffs.jpg',
+            excerpt: 'As tensões comerciais entre Estados Unidos e China continuam a gerar volatilidade nos mercados de criptomoedas, com o Bitcoin oscilando em resposta a novas tarifas.'
         },
         {
             title: 'Bitcoin enfrenta resistência técnica em $84.000, dizem especialistas',
             url: '#',
             source: 'Technical Analysis',
             date: new Date().toLocaleDateString(),
-            image: '/img/bitcoin-resistance.jpg'
+            image: 'img/bitcoin-resistance.jpg',
+            excerpt: 'Análises técnicas indicam que o Bitcoin está enfrentando uma forte resistência na faixa de $84.000, um nível crucial para determinar o próximo movimento de preço.'
         },
         {
             title: 'Adoção institucional de Bitcoin atinge novos recordes no primeiro trimestre',
             url: '#',
             source: 'Institutional Crypto',
             date: new Date().toLocaleDateString(),
-            image: '/img/bitcoin-analysis.jpg'
+            image: 'img/bitcoin-analysis.jpg',
+            excerpt: 'Dados recentes mostram que a adoção institucional de Bitcoin atingiu níveis recordes no primeiro trimestre de 2025, com empresas aumentando suas reservas em criptomoedas.'
         }
     ];
 }
@@ -296,3 +302,21 @@ function updateFeaturedArticle(featuredElement, news) {
         readMoreElement.href = news.url || '#';
     }
 }
+
+/* Adicionar estilos para o indicador de atualização de notícias */
+document.addEventListener('DOMContentLoaded', function() {
+    const style = document.createElement('style');
+    style.textContent = `
+    .news-update-info {
+        text-align: center;
+        margin-top: 20px;
+        padding: 10px;
+        background-color: var(--card-background);
+        border-radius: 5px;
+        font-size: 0.9rem;
+        color: var(--secondary-color);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    `;
+    document.head.appendChild(style);
+});
