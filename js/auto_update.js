@@ -59,7 +59,7 @@ async function updateBitcoinPrice() {
         const volume24h = data.market_data.total_volume.usd;
         
         // Update DOM elements
-        document.querySelector(CONFIG.priceSelector).textContent = `$${price.toLocaleString()}`;
+        document.querySelector(CONFIG.priceSelector).textContent = `$${price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         
         const changeElement = document.querySelector(CONFIG.changeSelector);
         changeElement.textContent = `${priceChange24h.toFixed(2)}%`;
@@ -73,8 +73,8 @@ async function updateBitcoinPrice() {
             changeElement.classList.add('negative');
         }
         
-        document.querySelector(CONFIG.highSelector).textContent = `$${high24h.toLocaleString()}`;
-        document.querySelector(CONFIG.lowSelector).textContent = `$${low24h.toLocaleString()}`;
+        document.querySelector(CONFIG.highSelector).textContent = `$${high24h.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.querySelector(CONFIG.lowSelector).textContent = `$${low24h.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         document.querySelector(CONFIG.volumeSelector).textContent = `$${Math.round(volume24h).toLocaleString()}`;
         
         // Update last update time
@@ -164,7 +164,7 @@ async function getFallbackNews() {
                     url: 'https://twitter.com/search?q=bitcoin',
                     source: 'Twitter',
                     date: new Date().toLocaleDateString(),
-                    image: index === 0 ? '/img/bitcoin-news.jpg' : null,
+                    image: index === 0 ? 'img/bitcoin-news.jpg' : null,
                     excerpt: tweet.textContent.trim()
                 }));
             }
@@ -231,6 +231,15 @@ function createNewsCard(news, featured = false) {
     const img = document.createElement('img');
     img.src = news.image || 'img/bitcoin-news.jpg';
     img.alt = news.title;
+    img.onerror = function() {
+        console.log('Erro ao carregar imagem:', img.src);
+        // Tentar caminho alternativo se a imagem falhar
+        if (!img.src.startsWith('http')) {
+            img.src = window.location.pathname.endsWith('/') 
+                ? window.location.pathname + news.image 
+                : window.location.pathname + '/' + news.image;
+        }
+    };
     imageDiv.appendChild(img);
     card.appendChild(imageDiv);
     
