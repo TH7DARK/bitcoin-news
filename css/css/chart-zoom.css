@@ -1,0 +1,53 @@
+/* Estilos para os controles de zoom do gráfico */
+.chart-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+.chart-control-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.chart-control-btn-text {
+    border-radius: 5px;
+    width: auto;
+    padding: 0 10px;
+    font-weight: bold;
+}
+
+.chart-control-separator {
+    width: 1px;
+    background-color: var(--border-color);
+    margin: 0 5px;
+}
+
+.chart-control-btn:hover {
+    background-color: var(--accent-color);
+}
+
+.chart-instructions {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgba(var(--primary-color-rgb), 0.1);
+}
+
+.chart-instructions i {
+    margin-right: 5px;
+    color: var(--primary-color);
+}

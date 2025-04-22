@@ -1,0 +1,40 @@
+/* Estilos para o botão de alternância de moeda */
+.currency-toggle {
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.currency-toggle button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.currency-toggle button:hover {
+    background-color: var(--accent-color);
+}
+
+.currency-toggle i {
+    margin-right: 5px;
+}
+
+/* Ajuste para layout responsivo */
+@media (max-width: 768px) {
+    .price-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .currency-toggle {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
