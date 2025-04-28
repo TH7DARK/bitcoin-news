@@ -1,232 +1,329 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>₿itcoin News - Notícias e Cotação ao Vivo</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/chart-zoom.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Bitcoin News - Site Corrigido</title>
+  <meta name="description" content="Site de notícias sobre Bitcoin com correções para imagens, títulos e zoom">
+  <meta name="viewport" content="width=1024">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    body { font-family: 'Roboto', sans-serif; background: #f7fafc; color: #222;}
+    .card { background: #fff; border-radius: 0.75rem; box-shadow: 0 1px 6px #0001; margin-bottom: 1.5rem; }
+    .news-img { width: 100%; max-height: 220px; object-fit: cover; border-radius: 0.75rem 0.75rem 0 0; }
+    .currency-btn.active, .theme-btn.active { background: #f7931a; color: #fff;}
+    .chart-legend { display: flex; align-items: center; gap: 1.5rem;}
+    .chart-legend span { display: flex; align-items: center; gap: .5rem;}
+    .news-title { transition: color 0.2s; cursor: pointer;}
+    /* Zoom/Button styles for Chart */
+    .zoom-controls { display: flex; align-items: center; gap: 0.30rem; margin-top: 1rem; }
+    .zoom-btn { background: #f7931a; color: #fff; border: none; border-radius: .3rem; width: 2rem; height: 2rem; font-size: 1.1rem; cursor: pointer; display:flex; align-items:center; justify-content:center;}
+    .zoom-btn:hover { background: #cc7812;}
+    /* Print styles for PDF, no scrollbars */
+    @media print {
+      html, body { width: 100%; overflow: visible !important; }
+      .overflow-x-auto, .overflow-auto, .overflow-y-auto { overflow: visible !important; }
+      .scrollbar-hide::-webkit-scrollbar { display: none !important;}
+    }
+  </style>
 </head>
-<body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <i class="fab fa-bitcoin"></i>
-                <h1>₿itcoin News</h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#noticias">Notícias</a></li>
-                    <li><a href="#analise">Análise</a></li>
-                    <li><a href="#sobre">Sobre</a></li>
-                    <li class="theme-toggle">
-                        <button id="theme-toggle-btn">
-                            <i class="fas fa-moon"></i>
-                            <span>Dark Mode</span>
-                        </button>
-                    </li>
-                </ul>
-            </nav>
+<body class="max-w-3xl mx-auto pt-8 pb-10 bg-gray-50">
+  <!-- Header / Title -->
+  <header class="flex items-center mb-8">
+    <i class="fa-brands fa-bitcoin fa-2x text-yellow-500 mr-3"></i>
+    <h1 class="text-3xl font-bold tracking-wide mr-3">₿itcoin News</h1>
+
+    <!-- Currency Toggle -->
+    <div class="ml-auto flex items-center">
+      <button id="currencyUsd" class="currency-btn px-4 py-1 rounded-l font-bold border border-yellow-500 bg-white text-yellow-500 active">USD</button>
+      <button id="currencyBrl" class="currency-btn px-4 py-1 rounded-r font-bold border border-yellow-500 bg-white text-yellow-500">BRL</button>
+      <button class="ml-4 theme-btn px-3 py-1 border rounded text-gray-700" id="themeToggle" title="Alternar tema">
+        <i class="fa fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Bitcoin Price Info -->
+  <section class="card p-6 mb-8">
+    <h2 class="text-xl font-semibold mb-2 flex items-center"><i class="fas fa-coins text-yellow-500 mr-2"></i> Bitcoin (BTC)</h2>
+    <div class="flex flex-row flex-wrap items-center justify-between text-lg space-x-2 mb-1">
+      <div>
+        <b>Preço atual:</b>
+        <span class="text-2xl" id="btc-price">$--</span>
+      </div>
+      <div>
+        <b>Variação 24h:</b>
+        <span id="btc-change" class="font-bold">--</span>
+      </div>
+      <div>
+        <b>Alta 24h:</b>
+        <span id="btc-high">--</span>
+      </div>
+      <div>
+        <b>Baixa 24h:</b>
+        <span id="btc-low">--</span>
+      </div>
+      <div>
+        <b>Volume 24h:</b>
+        <span id="btc-volume">--</span>
+      </div>
+    </div>
+    <small class="text-gray-500">Atualizado em <span id="btc-updated">--</span></small>
+  </section>
+
+  <!-- Bitcoin Price Chart -->
+  <section class="card p-6 mb-8">
+    <h3 class="text-xl font-semibold mb-4"><i class="fa-solid fa-chart-line mr-2 text-green-500"></i> Gráfico de Preço</h3>
+    <canvas id="priceChart" height="120"></canvas>
+    <div class="zoom-controls mt-2">
+      <button class="zoom-btn" id="zoomIn" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+      <button class="zoom-btn" id="zoomOut" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+      <button class="zoom-btn" id="resetZoom" title="Resetar Zoom"><i class="fas fa-sync"></i></button>
+      <span class="ml-2 text-sm text-gray-500">Use os botões para ZOOM no gráfico</span>
+    </div>
+  </section>
+
+  <!-- Noticias do Dia -->
+  <section>
+    <h3 class="text-2xl font-bold mb-3 flex items-center"><i class="fa-regular fa-newspaper mr-2"></i> Notícias do Dia</h3>
+    <div id="news-list">
+      <!-- Notícias carregadas por JS -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="pt-10 pb-2 text-center text-gray-500">
+    <div>
+      <i class="fab fa-github"></i> Desenvolvido para fins educacionais | <span id="footer-year"></span>
+    </div>
+  </footer>
+
+  <!-- CDN Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1/dist/chartjs-plugin-zoom.min.js"></script>
+  <script>
+const CURRENCY_FORMAT = { USD: { style:'currency', currency:'USD'}, BRL: { style:'currency', currency:'BRL'} };
+let currentCurrency = 'USD';
+let btcData = null;
+let priceChart, rawChartData = {labels:[], data:[]};
+
+// Fake news fallback (em caso de API falhar)
+const fakeNews = [
+  { title: "Bitcoin oscila em torno de US$ 80 mil com guerra comercial EUA-China", 
+    image: "https://images.unsplash.com/photo-1518544803493-233c42b6a83b?auto=format&fit=crop&w=800&q=80",
+    published_at: "Hoje",
+    description: "O Bitcoin está sendo afetado pela escalada da guerra comercial entre Estados Unidos e China, com tarifas recíprocas gerando volatilidade nos mercados de risco.",
+    url: "#"
+  },
+  { title: "Bitcoin pode atingir US$ 84 mil se as condições de alta não melhorarem",
+    image: "https://images.unsplash.com/photo-1508385082359-f48d945d5b03?auto=format&fit=crop&w=800&q=80",
+    published_at: "Hoje",
+    description: "Segundo a CryptoQuant, o Bitcoin pode enfrentar resistência em torno de US$ 84.000, mas se romper, o próximo grande obstáculo estará em US$ 96.000.",
+    url: "#"
+  },
+  { title: "Políticas tarifárias de Trump impactam mercado de criptomoedas",
+    image: "https://images.unsplash.com/photo-1622547748227-8b8c1bd74542?auto=format&fit=crop&w=800&q=80",
+    published_at: "Hoje",
+    description: "O Bitcoin ultrapassou brevemente os US$ 85 mil em 1º de abril, mas recuou para cerca de US$ 76 mil devido a novas políticas.",
+    url: "#"
+  }
+];
+
+// -------- TEMA DARK/LIGHT --------
+const themeToggleBtn = document.getElementById('themeToggle');
+themeToggleBtn.addEventListener('click', function() {
+  if(document.documentElement.classList.toggle('dark')) {
+    themeToggleBtn.querySelector('i').classList.remove('fa-moon');
+    themeToggleBtn.querySelector('i').classList.add('fa-sun');
+  } else {
+    themeToggleBtn.querySelector('i').classList.remove('fa-sun');
+    themeToggleBtn.querySelector('i').classList.add('fa-moon');
+  }
+});
+
+// -------- MUDANÇA DE MOEDA --------
+function updateCurrencyBtns() {
+  document.querySelectorAll('.currency-btn').forEach(btn =>
+    btn.classList.toggle('active', (btn.textContent === currentCurrency))
+  );
+}
+document.getElementById("currencyUsd").onclick = ()=>{ currentCurrency='USD'; updateDisplay(); updateCurrencyBtns();}
+document.getElementById("currencyBrl").onclick = ()=>{ currentCurrency='BRL'; updateDisplay(); updateCurrencyBtns();}
+
+// -------- BUSCA DADOS DO BITCOIN --------
+function fetchBitcoinData() {
+  // Exemplo didático: use a própria API da CoinGecko
+  fetch("https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true")
+    .then(r=>r.json())
+    .then(data => {
+      btcData = data;
+      updateDisplay();
+    }).catch(()=>{ // fallback para valores fake se offline
+      btcData = {
+        market_data: {
+          current_price: { usd: 83971.41, brl: 417621 },
+          price_change_percentage_24h: 1.34,
+          high_24h: { usd: 83971.41, brl: 417621 },
+          low_24h: { usd: 78969.89, brl: 393122 },
+          total_volume: { usd: 41135812608, brl: 2.28e11 }
+        },
+        last_updated: new Date().toISOString()
+      };
+      updateDisplay();
+    });
+}
+
+// -------- DADOS GRÁFICO --------
+function fetchChartData() {
+  // Exemplo didático: Yahoo Finance BTC-USD candles dos últimos 15 dias (~free endpoint)
+  fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=15')
+    .then(r=>r.json())
+    .then(json=>{
+      rawChartData.labels = json.prices.map(p=> {
+        const d = new Date(p[0]);
+        return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}`;
+      });
+      rawChartData.data = json.prices.map(p=>p[1]);
+      updateChart();
+    }).catch(()=>{
+      // fallback para valores fake
+      rawChartData.labels = [...Array(15)].map((_,i)=> `${(16-i).toString().padStart(2,'0')}/04`);
+      rawChartData.data = [82862,83722,81066,82259,82355,83446,81339,83280,82071,82655,82964,84259,83287,83971,83971];
+      updateChart();
+    });
+}
+
+// -------- ATUALIZAÇÃO DE TELA --------
+function updateDisplay() {
+  if(!btcData) return;
+  const curr = currentCurrency.toLowerCase();
+  document.getElementById("btc-price").textContent = curr==='usd'
+    ? btcData.market_data.current_price.usd.toLocaleString('en-US', CURRENCY_FORMAT.USD)
+    : btcData.market_data.current_price.brl.toLocaleString('pt-BR', CURRENCY_FORMAT.BRL);
+  const pct = btcData.market_data.price_change_percentage_24h;
+  document.getElementById("btc-change").textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
+  document.getElementById("btc-change").className = pct >= 0 ? 'text-green-500 font-bold' : 'text-red-500 font-bold';
+  document.getElementById("btc-high").textContent = curr==='usd'
+    ? btcData.market_data.high_24h.usd.toLocaleString('en-US', CURRENCY_FORMAT.USD)
+    : btcData.market_data.high_24h.brl.toLocaleString('pt-BR', CURRENCY_FORMAT.BRL);
+  document.getElementById("btc-low").textContent = curr==='usd'
+    ? btcData.market_data.low_24h.usd.toLocaleString('en-US', CURRENCY_FORMAT.USD)
+    : btcData.market_data.low_24h.brl.toLocaleString('pt-BR', CURRENCY_FORMAT.BRL);
+
+  document.getElementById("btc-volume").textContent = curr==='usd'
+    ? btcData.market_data.total_volume.usd.toLocaleString('en-US', CURRENCY_FORMAT.USD)
+    : btcData.market_data.total_volume.brl.toLocaleString('pt-BR', CURRENCY_FORMAT.BRL);
+
+  document.getElementById("btc-updated").textContent = btcData.last_updated
+    ? new Date(btcData.last_updated).toLocaleString('pt-BR')
+    : '--';
+  updateChart();
+}
+
+// -------- GERA GRÁFICO --------
+function updateChart() {
+  if(!rawChartData.labels.length) return;
+  let displayData = rawChartData.data;
+  if(currentCurrency==='BRL') displayData = displayData.map(v=>v*5.0); // Aproximação do valor
+  if(priceChart) { // Atualiza dados se já existe
+    priceChart.data.labels = rawChartData.labels;
+    priceChart.data.datasets[0].data = displayData;
+    priceChart.update();
+    return;
+  }
+  // Inicializa gráfico
+  const ctx = document.getElementById('priceChart').getContext('2d');
+  priceChart = new Chart(ctx, {
+    type:"line",
+    data: {
+      labels: rawChartData.labels,
+      datasets:[
+        { label: "BTC", data: displayData, borderColor:"#f7931a", backgroundColor:"rgba(247,147,26,0.10)", tension:0.2, fill: true, pointRadius:3 }
+      ]
+    },
+    options:{
+      responsive: false,  // Melhor para exportação PDF
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display:false },
+        zoom: {
+          pan: { enabled: true, mode: 'x', modifierKey: 'ctrl' },
+          zoom: {
+            wheel: { enabled: true },
+            pinch: { enabled: true },
+            mode: 'x',
+          }
+        }
+      },
+      scales: { x: { ticks: { color:'#222' } }, y: { ticks: { color:'#222' } } }
+    }
+  });
+}
+
+// --- Controles de Zoom ---
+document.getElementById("zoomIn").onclick = ()=> {
+  if(priceChart) priceChart.zoom(1.2);
+};
+document.getElementById("zoomOut").onclick = ()=> {
+  if(priceChart) priceChart.zoom(0.8);
+};
+document.getElementById("resetZoom").onclick = ()=> {
+  if(priceChart) priceChart.resetZoom();
+};
+
+// --------- BUSCA AS NOTÍCIAS ---------
+function fetchNews() {
+  // O endpoint (exemplo): https://api.coingecko.com/api/v3/news?category=bitcoin nunca retornará imagens diferentes, então Opte por fallback fakeNews.
+  // Se quiser usar alguma verdadeira: https://gnews.io/
+  // const url = `https://gnews.io/api/v4/search?q=bitcoin&lang=pt&country=br&max=4&token=demo`;
+  // Fornecemos offline sempre
+  renderNews(fakeNews);
+}
+
+function renderNews(newsArr) {
+  const list = document.getElementById("news-list");
+  list.innerHTML = "";
+  newsArr.forEach((item, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'card shadow mb-7 overflow-hidden';
+    card.innerHTML = `
+      <img class="news-img" src="${item.image}" alt="Imagem da notícia sobre Bitcoin"/>
+      <div class="p-4">
+        <div class="flex items-center mb-2">
+          <span class="text-sm text-gray-400 mr-4"><i class="fa fa-calendar-alt"></i> ${item.published_at}</span>
         </div>
-    </header>
+        <h4 class="text-xl font-semibold mb-1 news-title" contenteditable="true" data-news-idx="${idx}">${item.title}</h4>
+        <p class="text-gray-700 mb-2">${item.description}</p>
+        <a href="${item.url}" target="_blank" rel="noopener" class="inline-flex items-center text-yellow-600 hover:underline">
+          <span>Ler mais</span><i class="fa fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+    `;
+    list.appendChild(card);
+  });
 
-    <main>
-        <section class="price-section">
-            <div class="container">
-                <div class="price-header">
-                    <h2>Bitcoin (BTC)</h2>
-                    <div class="currency-toggle">
-                        <button id="currency-toggle-btn">
-                            <i class="fas fa-dollar-sign"></i>
-                            <span>USD / BRL</span>
-                    </div>
-                </div>
+  // Permite alterar títulos diretamente (live)
+  document.querySelectorAll('.news-title').forEach(el => {
+    el.addEventListener('blur', function(){
+      const idx = parseInt(el.getAttribute('data-news-idx'));
+      if(Number.isInteger(idx)) newsArr[idx].title = el.textContent;
+      // opcional: poderia salvar no localStorage
+    });
+  });
+}
 
-                <div class="price-footer">
-                    <div class="price-stat">
-                        <span>24h Alta</span>
-                        <span id="day-high">$0.00</span>
-                    </div>
-                    <div class="price-stat">
-                        <span>24h Baixa</span>
-                        <span id="day-low">$0.00</span>
-                    </div>
-                    <div class="price-stat">
-                        <span>Volume 24h</span>
-                        <span id="day-volume">$0.00</span>
-                    </div>
-                </div>
-                <div class="last-updated">
-                    Atualizado em <span id="last-updated">00/00/0000 00:00:00</span>
-                </div>
-            </div>
-        </div>
-    </section>
+// ----------- INICIALIZAÇÃO ------------
+window.onload = () => {
+  fetchBitcoinData();
+  fetchChartData();
+  fetchNews();
+  updateCurrencyBtns();
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+};
+// Atualiza preços periodicamente (1 em 1 min)
+setInterval(fetchBitcoinData, 60000);
 
-    <section id="chart-section">
-        <div class="container">
-            <h2>Gráfico de Preço</h2>
-            <div class="chart-container">
-                <canvas id="price-chart"></canvas>
-                <div class="zoom-controls mt-2">
-                             <button class="zoom-btn" id="zoomIn" title="Zoom In"><i class="fas fa-search-plus"></i></button>
-                             <button class="zoom-btn" id="zoomOut" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
-                             <button class="zoom-btn" id="resetZoom" title="Resetar Zoom"><i class="fas fa-sync"></i></button>
-                    <span class="ml-2 text-sm text-gray-500">Use os botões para ZOOM no gráfico</span>
-                  </div>
-                </section>
-            </div>
-        </div>
-    </section>
-
-    <section id="news-section">
-        <div class="container">
-            <h2>Notícias do Dia</h2>
-            <div class="news-container">
-                <article class="news-card featured">
-                    <div class="news-image">
-                        <img src="img/bitcoin-news.jpg" alt="Bitcoin e Guerra Comercial">
-                    </div>
-                    <div class="news-content">
-                        <h3>Bitcoin oscila em torno de US$ 80 mil com guerra comercial EUA-China</h3>
-                        <p class="news-meta">Publicado hoje</p>
-                        <p class="news-excerpt">
-                            O Bitcoin está sendo afetado pela escalada da guerra comercial entre Estados Unidos e China, 
-                            com tarifas recíprocas gerando volatilidade nos mercados de risco.
-                        </p>
-                        <a href="#" class="read-more">Ler mais</a>
-                    </div>
-                </article>
-
-                <div class="news-grid">
-                    <article class="news-card">
-                        <div class="news-image">
-                            <img src="img/bitcoin-resistance.jpg" alt="Bitcoin Resistência">
-                        </div>
-                        <div class="news-content">
-                            <h3>Bitcoin pode atingir US$ 84 mil se as condições de alta não melhorarem</h3>
-                            <p class="news-meta">Publicado hoje</p>
-                            <p class="news-excerpt">
-                                Segundo a CryptoQuant, o Bitcoin pode enfrentar resistência em torno de US$ 84.000, 
-                                mas se romper, o próximo grande obstáculo estará em US$ 96.000.
-                            </p>
-                            <a href="#" class="read-more">Ler mais</a>
-                        </div>
-                    </article>
-
-                    <article class="news-card">
-                        <div class="news-image">
-                            <img src="img/bitcoin-tariffs.jpg" alt="Bitcoin e Tarifas">
-                        </div>
-                        <div class="news-content">
-                            <h3>Políticas tarifárias de Trump impactam mercado de criptomoedas</h3>
-                            <p class="news-meta">Publicado hoje</p>
-                            <p class="news-excerpt">
-                                O Bitcoin ultrapassou brevemente os US$ 85 mil em 1º de abril, mas recuou para cerca de US$ 76 mil 
-                                em 8 de abril devido à incerteza em torno das políticas tarifárias.
-                            </p>
-                            <a href="#" class="read-more">Ler mais</a>
-                        </div>
-                    </article>
-
-                    <article class="news-card">
-                        <div class="news-image">
-                            <img src="img/bitcoin-forecast.jpg" alt="Bitcoin Previsão">
-                        </div>
-                        <div class="news-content">
-                            <h3>Analistas preveem Bitcoin a US$ 140 mil até o final de junho</h3>
-                            <p class="news-meta">Publicado hoje</p>
-                            <p class="news-excerpt">
-                                Bill Barhydt, CEO da Abra Global, afirma que o BTC pode chegar a US$ 130 mil ou até US$ 140 mil 
-                                até o final de junho, baseado no aumento da oferta monetária global.
-                            </p>
-                            <a href="#" class="read-more">Ler mais</a>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="analysis-section">
-        <div class="container">
-            <h2>Por que o Bitcoin está oscilando?</h2>
-            <div class="analysis-content">
-                <div class="analysis-text">
-                    <h3>Principais fatores que influenciam as oscilações de preço</h3>
-                    <div class="factor">
-                        <h4><i class="fas fa-globe"></i> Guerra Comercial EUA-China</h4>
-                        <p>
-                            A China aumentou as tarifas de retaliação sobre produtos norte-americanos de 84% para 125%, 
-                            enquanto os EUA impuseram uma taxa de 145% sobre produtos chineses. Esse vai e vem de tarifas 
-                            comerciais tem gerado instabilidade nos mercados de risco, incluindo criptomoedas.
-                        </p>
-                    </div>
-                    <div class="factor">
-                        <h4><i class="fas fa-chart-line"></i> Níveis de Resistência Técnica</h4>
-                        <p>
-                            Segundo análise da CryptoQuant, o Bitcoin pode enfrentar resistência em torno de US$ 84.000. 
-                            Se romper essa resistência, o próximo grande obstáculo estará em US$ 96.000.
-                        </p>
-                    </div>
-                    <div class="factor">
-                        <h4><i class="fas fa-sync-alt"></i> Correlação com Mercados Tradicionais</h4>
-                        <p>
-                            O Bitcoin tem mostrado correlação com os mercados de ações, especialmente com empresas de tecnologia. 
-                            Segundo o analista Eric Balchunas da Bloomberg, o S&P 500 atingiu uma volatilidade igual à do Bitcoin na última semana.
-                        </p>
-                    </div>
-                    <a href="#" class="read-full-analysis">Ler análise completa</a>
-                </div>
-                <div class="analysis-image">
-                    <img src="img/bitcoin-analysis.jpg" alt="Análise do Bitcoin">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <i class="fab fa-bitcoin"></i>
-                    <h2>₿itcoin News</h2>
-                    <p>Seu portal de notícias sobre Bitcoin e criptomoedas</p>
-                </div>
-                <div class="footer-links">
-                    <h3>Links Rápidos</h3>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#noticias">Notícias</a></li>
-                        <li><a href="#analise">Análise</a></li>
-                        <li><a href="#sobre">Sobre</a></li>
-                    </ul>
-                </div>
-                <div class="footer-social">
-                    <h3>Redes Sociais</h3>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-telegram"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 ₿itcoin News. Todos os direitos reservados.</p>
-                <p class="signature">TH</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/theme-toggle.js"></script>
-    <script src="js/auto_update.js"></script>
-    <script src="js/chart-zoom.js"></script>
-    <script src="js/twitter-feed.js"></script>
+  </script>
 </body>
 </html>
