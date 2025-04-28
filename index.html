@@ -33,22 +33,19 @@
         </div>
     </header>
 
-    <section id="price-ticker">
-        <div class="container">
-            <div class="price-card">
+    <main>
+        <section class="price-section">
+            <div class="container">
                 <div class="price-header">
-                    <i class="fab fa-bitcoin"></i>
                     <h2>Bitcoin (BTC)</h2>
-                </div>
-                <div class="price-content">
-                    <div class="current-price">
-                        <span id="btc-price">$0.00</span>
-                    </div>
-                    <div class="price-change">
-                        <span id="price-change-percent">0.00%</span>
-                        <span id="price-change-value">$0.00</span>
+                    <div class="currency-toggle">
+                        <button id="currency-toggle-btn">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>USD / BRL</span>
+                        </button>
                     </div>
                 </div>
+
                 <div class="price-footer">
                     <div class="price-stat">
                         <span>24h Alta</span>
@@ -70,14 +67,15 @@
         </div>
     </section>
 
-    <section id="chart-section">
-        <div class="container">
-            <h2>Gráfico de Preço</h2>
-            <div class="chart-container">
-                <canvas id="price-chart"></canvas>
+    <section class="chart-section">
+            <div class="container">
+                <h2>Gráfico de Preço</h2>
+                <div class="chart-container">
+                    <canvas id="price-chart"></canvas>
+                </div>
+                <!-- Os controles de zoom serão adicionados via JavaScript -->
             </div>
-        </div>
-    </section>
+        </section>
 
     <section id="news-section">
         <div class="container">
