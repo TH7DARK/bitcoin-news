@@ -42,7 +42,6 @@
                         <button id="currency-toggle-btn">
                             <i class="fas fa-dollar-sign"></i>
                             <span>USD / BRL</span>
-                        </button>
                     </div>
                 </div>
 
@@ -67,15 +66,21 @@
         </div>
     </section>
 
-    <section class="chart-section">
-            <div class="container">
-                <h2>Gráfico de Preço</h2>
-                <div class="chart-container">
-                    <canvas id="price-chart"></canvas>
-                </div>
-                <!-- Os controles de zoom serão adicionados via JavaScript -->
+    <section id="chart-section">
+        <div class="container">
+            <h2>Gráfico de Preço</h2>
+            <div class="chart-container">
+                <canvas id="price-chart"></canvas>
+                <div class="zoom-controls mt-2">
+                             <button class="zoom-btn" id="zoomIn" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+                             <button class="zoom-btn" id="zoomOut" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+                             <button class="zoom-btn" id="resetZoom" title="Resetar Zoom"><i class="fas fa-sync"></i></button>
+                    <span class="ml-2 text-sm text-gray-500">Use os botões para ZOOM no gráfico</span>
+                  </div>
+                </section>
             </div>
-        </section>
+        </div>
+    </section>
 
     <section id="news-section">
         <div class="container">
