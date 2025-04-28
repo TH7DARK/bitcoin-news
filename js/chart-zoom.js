@@ -1,150 +1,145 @@
 // Script para adicionar funcionalidade de zoom ao gráfico
 document.addEventListener('DOMContentLoaded', function() {
-    // Aguardar um pouco para garantir que o gráfico foi inicializado
-    setTimeout(function() {
-        initZoomFunctionality();
-    }, 1000);
-    
-    function initZoomFunctionality() {
-        // Verificar se o Chart.js está disponível
-        if (typeof Chart === 'undefined') {
-            console.error('Chart.js não está carregado. A funcionalidade de zoom não pode ser adicionada.');
-            return;
-        }
-        
-        // Carregar o plugin de zoom do Chart.js diretamente no HTML
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1/dist/chartjs-plugin-zoom.min.js';
-        script.onload = function() {
-            console.log('Plugin de zoom carregado com sucesso');
-            
-            // Aguardar um pouco para garantir que o plugin foi registrado
-            setTimeout(function() {
-                configureChartZoom();
-            }, 500);
-        };
-        script.onerror = function() {
-            console.error('Erro ao carregar o plugin de zoom');
-        };
-        document.head.appendChild(script);
-    }
-    
-    // Função para configurar o zoom no gráfico
-    function configureChartZoom() {
-        // Verificar se o gráfico existe
-        if (!window.priceChart) {
-            console.error('Gráfico não encontrado');
-            return;
-        }
-        
-        console.log('Configurando zoom para o gráfico');
-        
-        // Adicionar controles de zoom ao gráfico
-        window.priceChart.options.plugins.zoom = {
-            pan: {
-                enabled: true,
-                mode: 'x',
-                threshold: 10
-            },
-            zoom: {
-                wheel: {
-                    enabled: true,
-                },
-                pinch: {
-                    enabled: true
-                },
-                mode: 'x'
-            },
-            limits: {
-                x: {
-                    minRange: 7 // Mínimo de 7 pontos de dados visíveis
-                }
-            }
-        };
-        
-        // Adicionar botões de controle de zoom
-        addZoomControls();
-        
-        // Atualizar o gráfico
-        window.priceChart.update();
-    }
-    
-    // Função para adicionar botões de controle de zoom
-    function addZoomControls() {
-        // Remover controles existentes, se houver
-        const existingControls = document.querySelector('.chart-controls');
-        if (existingControls) {
-            existingControls.remove();
-        }
-        
-        // Criar container para os controles
-        const controlsContainer = document.createElement('div');
-        controlsContainer.className = 'chart-controls';
-        
-        // Botão de zoom in
-        const zoomInBtn = document.createElement('button');
-        zoomInBtn.className = 'chart-control-btn';
-        zoomInBtn.innerHTML = '<i class="fas fa-search-plus"></i>';
-        zoomInBtn.title = 'Ampliar';
-        zoomInBtn.onclick = function() {
-            if (window.priceChart.zoom && typeof window.priceChart.zoom === 'function') {
-                window.priceChart.zoom(1.1);
-            } else {
-                console.error('Função de zoom não disponível');
-            }
-        };
-        
-        // Botão de zoom out
-        const zoomOutBtn = document.createElement('button');
-        zoomOutBtn.className = 'chart-control-btn';
-        zoomOutBtn.innerHTML = '<i class="fas fa-search-minus"></i>';
-        zoomOutBtn.title = 'Reduzir';
-        zoomOutBtn.onclick = function() {
-            if (window.priceChart.zoom && typeof window.priceChart.zoom === 'function') {
-                window.priceChart.zoom(0.9);
-            } else {
-                console.error('Função de zoom não disponível');
-            }
-        };
-        
-        // Botão de reset
-        const resetBtn = document.createElement('button');
-        resetBtn.className = 'chart-control-btn';
-        resetBtn.innerHTML = '<i class="fas fa-undo"></i>';
-        resetBtn.title = 'Resetar zoom';
-        resetBtn.onclick = function() {
-            if (window.priceChart.resetZoom && typeof window.priceChart.resetZoom === 'function') {
-                window.priceChart.resetZoom();
-            } else {
-                console.error('Função de resetZoom não disponível');
-            }
-        };
-        
-        // Adicionar botões ao container
-        controlsContainer.appendChild(zoomInBtn);
-        controlsContainer.appendChild(zoomOutBtn);
-        controlsContainer.appendChild(resetBtn);
-        
-        // Adicionar container à seção do gráfico
-        const chartContainer = document.querySelector('.chart-container');
-        if (chartContainer) {
-            chartContainer.parentNode.insertBefore(controlsContainer, chartContainer.nextSibling);
-        }
-        
-        // Adicionar instruções de uso
-        const instructions = document.createElement('div');
-        instructions.className = 'chart-instructions';
-        instructions.innerHTML = `
-            <p>
-                <i class="fas fa-info-circle"></i>
-                Use a roda do mouse para ampliar/reduzir ou arraste para navegar pelo gráfico.
-                Clique em uma data específica para ver detalhes.
-            </p>
-        `;
-        
-        // Adicionar instruções após os controles
-        if (chartContainer) {
-            chartContainer.parentNode.insertBefore(instructions, controlsContainer.nextSibling);
-        }
-    }
+  // Carregar o plugin de zoom do Chart.js primeiro
+  loadZoomPlugin().then(() => {
+    // Inicializar o gráfico com zoom só depois que o plugin estiver carregado
+    initChart();
+  }).catch(error => {
+    console.error('Erro ao carregar plugin de zoom:', error);
+  });
 });
+
+// Função para carregar o plugin de zoom
+function loadZoomPlugin() {
+  return new Promise((resolve, reject) => {
+    // Verificar se o plugin já está carregado
+    if (window.Chart && Chart.Zoom) {
+      resolve();
+      return;
+    }
+    
+    // Carregar o plugin
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.0/dist/chartjs-plugin-zoom.min.js';
+    script.async = true;
+    
+    script.onload = () => {
+      console.log('Plugin de zoom carregado com sucesso');
+      resolve();
+    };
+    
+    script.onerror = () => {
+      reject(new Error('Falha ao carregar o plugin de zoom'));
+    };
+    
+    document.head.appendChild(script);
+  });
+}
+
+// Função para configurar o zoom no gráfico
+function configureChartZoom(chart) {
+  if (!chart || !Chart.Zoom) {
+    console.error('Chart ou plugin de zoom não disponível');
+    return;
+  }
+  
+  // Configurar opções de zoom
+  chart.options.plugins.zoom = {
+    zoom: {
+      wheel: {
+        enabled: true,
+      },
+      pinch: {
+        enabled: true
+      },
+      mode: 'xy',
+    },
+    pan: {
+      enabled: true,
+      mode: 'xy',
+    }
+  };
+  
+  // Atualizar o gráfico para aplicar as configurações
+  chart.update();
+  
+  // Adicionar botões de controle de zoom
+  addZoomControls(chart);
+}
+
+// Função para adicionar botões de controle
+function addZoomControls(chart) {
+  const chartContainer = document.querySelector('.chart-container');
+  if (!chartContainer) return;
+  
+  // Criar div para os controles
+  const controlsDiv = document.createElement('div');
+  controlsDiv.className = 'chart-controls';
+  controlsDiv.innerHTML = `
+    <button class="chart-control-btn" id="zoom-in"><i class="fas fa-search-plus"></i></button>
+    <button class="chart-control-btn" id="zoom-out"><i class="fas fa-search-minus"></i></button>
+    <span class="chart-control-separator"></span>
+    <button class="chart-control-btn chart-control-btn-text" id="reset-zoom">Resetar</button>
+  `;
+  
+  // Adicionar depois do gráfico
+  chartContainer.after(controlsDiv);
+  
+  // Adicionar eventos aos botões
+  document.getElementById('zoom-in').addEventListener('click', () => {
+    chart.zoom(1.1);
+  });
+  
+  document.getElementById('zoom-out').addEventListener('click', () => {
+    chart.zoom(0.9);
+  });
+  
+  document.getElementById('reset-zoom').addEventListener('click', () => {
+    chart.resetZoom();
+  });
+}
+
+// Modificar a função initChart no arquivo main.js
+function initChart() {
+  const ctx = document.getElementById('price-chart').getContext('2d');
+  
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      datasets: [{
+        label: 'Preço do Bitcoin (USD)',
+        borderColor: 'var(--primary-color)',
+        backgroundColor: 'rgba(247, 147, 26, 0.1)',
+        borderWidth: 2,
+        pointRadius: 0,
+        data: []
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      // Outras opções...
+    }
+  });
+  
+  // Configurar zoom depois que o gráfico estiver inicializado
+  if (window.Chart && Chart.Zoom) {
+    configureChartZoom(chart);
+  } else {
+    console.warn('Plugin de zoom não disponível ainda. Tentará configurar mais tarde...');
+    // Tentar novamente depois de um tempo
+    setTimeout(() => {
+      if (window.Chart && Chart.Zoom) {
+        configureChartZoom(chart);
+      } else {
+        console.error('Plugin de zoom não pôde ser carregado');
+      }
+    }, 2000);
+  }
+  
+  // Salvar referência do gráfico
+  window.bitcoinChart = chart;
+  
+  // Carregar dados iniciais
+  loadBitcoinData();
+}
