@@ -554,25 +554,3 @@ footer {
         grid-template-columns: 1fr;
     }
 }
-
-/* Adicionar estilos para o indicador de atualização de notícias */
-.news-update-info {
-    text-align: center;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: var(--card-background);
-    border-radius: 5px;
-    font-size: 0.9rem;
-    color: var(--secondary-color);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-/* Estilo para o indicador de última atualização no ticker de preço */
-.last-updated {
-    font-size: 0.8rem;
-    color: var(--secondary-color);
-    text-align: center;
-    margin-top: 10px;
-    padding-top: 5px;
-    border-top: 1px solid var(--border-color);
-}

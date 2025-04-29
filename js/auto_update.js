@@ -176,13 +176,13 @@ async function getFallbackNews() {
     // If tweet fetching fails, use predefined news
     return [
         {
-            title: 'Bitcoin se mantém acima de $80.000 enquanto mercado aguarda decisões de política monetária',
+            title: 'Bitcoin se mantém acima de $90.000 enquanto mercado aguarda decisões de política monetária',
             url: '#',
             source: 'Crypto News',
             date: new Date().toLocaleDateString(),
             image: 'img/bitcoin-news.jpg',
             featured: true,
-            excerpt: 'O Bitcoin continua a se manter acima da marca de $80.000 enquanto investidores aguardam decisões importantes de política monetária dos principais bancos centrais.'
+            excerpt: 'O Bitcoin continua a se manter acima da marca de $90.000 enquanto investidores aguardam decisões importantes de política monetária dos principais bancos centrais.'
         },
         {
             title: 'Analistas preveem que Bitcoin pode atingir $100.000 até o final do ano',
@@ -201,7 +201,7 @@ async function getFallbackNews() {
             excerpt: 'As tensões comerciais entre Estados Unidos e China continuam a gerar volatilidade nos mercados de criptomoedas, com o Bitcoin oscilando em resposta a novas tarifas.'
         },
         {
-            title: 'Bitcoin enfrenta resistência técnica em $84.000, dizem especialistas',
+            title: 'Bitcoin enfrenta resistência técnica em $95.000, dizem especialistas',
             url: '#',
             source: 'Technical Analysis',
             date: new Date().toLocaleDateString(),
