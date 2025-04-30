@@ -5,10 +5,10 @@
 const CONFIG = {
     // Update intervals (in milliseconds)
     bitcoinUpdateInterval: 60000, // 1 minute
-    newsUpdateInterval: 1800000,  // 30 minutes (reduzido de 1 hora para 30 minutos)
+    newsUpdateInterval: 86400000,  // 24 horas (atualização diária)
     
     // API endpoints
-    coinMarketCapAPI: 'c13110c6-793b-4ffb-8501-b21669b93fac',
+    coinGeckoAPI: 'https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false',
     cryptoNewsAPI: 'https://api.apitube.io/v1/news/articles?limit=5&search=bitcoin&api_key=YOUR_API_KEY',
     
     // CORS Proxy (for APIs that don't support CORS)
@@ -176,13 +176,13 @@ async function getFallbackNews() {
     // If tweet fetching fails, use predefined news
     return [
         {
-            title: 'Bitcoin se mantém acima de $90.000 enquanto mercado aguarda decisões de política monetária',
+            title: 'Bitcoin se mantém acima de $80.000 enquanto mercado aguarda decisões de política monetária',
             url: '#',
             source: 'Crypto News',
             date: new Date().toLocaleDateString(),
             image: 'img/bitcoin-news.jpg',
             featured: true,
-            excerpt: 'O Bitcoin continua a se manter acima da marca de $90.000 enquanto investidores aguardam decisões importantes de política monetária dos principais bancos centrais.'
+            excerpt: 'O Bitcoin continua a se manter acima da marca de $80.000 enquanto investidores aguardam decisões importantes de política monetária dos principais bancos centrais.'
         },
         {
             title: 'Analistas preveem que Bitcoin pode atingir $100.000 até o final do ano',
@@ -201,7 +201,7 @@ async function getFallbackNews() {
             excerpt: 'As tensões comerciais entre Estados Unidos e China continuam a gerar volatilidade nos mercados de criptomoedas, com o Bitcoin oscilando em resposta a novas tarifas.'
         },
         {
-            title: 'Bitcoin enfrenta resistência técnica em $95.000, dizem especialistas',
+            title: 'Bitcoin enfrenta resistência técnica em $84.000, dizem especialistas',
             url: '#',
             source: 'Technical Analysis',
             date: new Date().toLocaleDateString(),
