@@ -8,7 +8,7 @@ const CONFIG = {
     newsUpdateInterval: 1800000,  // 30 minutes (reduzido de 1 hora para 30 minutos)
     
     // API endpoints
-    coinGeckoAPI: 'https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false',
+    coinMarketCapAPI: 'c13110c6-793b-4ffb-8501-b21669b93fac',
     cryptoNewsAPI: 'https://api.apitube.io/v1/news/articles?limit=5&search=bitcoin&api_key=YOUR_API_KEY',
     
     // CORS Proxy (for APIs that don't support CORS)
